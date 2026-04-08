@@ -19,6 +19,11 @@
 
 #include <errno.h>
 
+#if defined(ARDUINO_ARCH_ZEPHYR)
+extern int libmodbus_errno;
+#define errno libmodbus_errno
+#endif
+
 extern "C" {
 #include "libmodbus/modbus.h"
 #include "libmodbus/modbus-tcp.h"

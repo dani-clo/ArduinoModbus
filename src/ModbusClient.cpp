@@ -21,6 +21,11 @@
 
 #include "ModbusClient.h"
 
+#if defined(ARDUINO_ARCH_ZEPHYR)
+extern int libmodbus_errno;
+#define errno libmodbus_errno
+#endif
+
 ModbusClient::ModbusClient(unsigned long defaultTimeout) :
   _mb(NULL),
   _timeout(defaultTimeout),
@@ -407,11 +412,13 @@ long ModbusClient::read()
 
 const char* ModbusClient::lastError()
 {
-  if (errno == 0) {
+  int err = errno;
+
+  if (err == 0) {
     return NULL;
   }
 
-  return modbus_strerror(errno); 
+  return modbus_strerror(err);
 }
 
 void ModbusClient::setTimeout(unsigned long ms)

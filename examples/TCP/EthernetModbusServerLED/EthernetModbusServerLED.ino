@@ -14,6 +14,10 @@
 
 #include <SPI.h>
 #include <Ethernet.h>
+#if defined(ARDUINO_ARCH_ZEPHYR)
+#include <ZephyrServer.h>
+#include <ZephyrClient.h>
+#endif
 
 #include <ArduinoRS485.h> // ArduinoModbus depends on the ArduinoRS485 library
 #include <ArduinoModbus.h>
@@ -26,7 +30,11 @@ byte mac[] = {
 };
 IPAddress ip(192, 168, 1, 177);
 
+#if defined(ARDUINO_ARCH_ZEPHYR)
+ZephyrServer ethServer(502);
+#else
 EthernetServer ethServer(502);
+#endif
 
 ModbusTCPServer modbusTCPServer;
 
@@ -82,7 +90,7 @@ void setup() {
 void loop() {
   // listen for incoming clients
   EthernetClient client = ethServer.available();
-  
+
   if (client) {
     // a new client connected
     Serial.println("new client");

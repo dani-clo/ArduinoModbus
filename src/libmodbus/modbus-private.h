@@ -20,6 +20,7 @@ struct timeval {
     uint32_t tv_usec;
 };
 #else
+# include <sys/select.h>
 # include <sys/time.h>
 #endif
 #else
@@ -30,6 +31,12 @@ typedef int ssize_t;
 #include <sys/types.h>
 #ifndef ARDUINO
 #include <config.h>
+#endif
+
+#if defined(ARDUINO_ARCH_ZEPHYR)
+/* Zephyr builds do not link TLS-backed libc errno. */
+extern int libmodbus_errno;
+#define errno libmodbus_errno
 #endif
 
 #include "modbus.h"

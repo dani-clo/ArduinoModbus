@@ -25,7 +25,12 @@
 #ifndef DEBUG
 #define printf(...) {}
 #define fprintf(...) {}
+#define vfprintf(...) {}
 #endif
+#endif
+
+#if defined(ARDUINO_ARCH_ZEPHYR)
+int libmodbus_errno = 0;
 #endif
 
 #ifndef ARDUINO
@@ -131,7 +136,12 @@ const char *modbus_strerror(int errnum) {
     case EMBBADSLAVE:
         return "Response not from requested slave";
     default:
+#if defined(ARDUINO_ARCH_ZEPHYR)
+        /* Zephyr builds do not link TLS-backed libc errno. */
+        return "Unknown error";
+#else
         return strerror(errnum);
+#endif
     }
 }
 

@@ -21,6 +21,11 @@
 
 #include "ModbusServer.h"
 
+#if defined(ARDUINO_ARCH_ZEPHYR)
+extern int libmodbus_errno;
+#define errno libmodbus_errno
+#endif
+
 ModbusServer::ModbusServer() :
   _mb(NULL)
 {
